@@ -2,6 +2,8 @@ import pg from 'pg';
 
 const { Pool } = pg;
 
+pg.types.setTypeParser(1082, (value) => value);
+
 if (!process.env.DATABASE_URL) {
   console.error(
     '\n[ERROR] DATABASE_URL is not set.\n' +
