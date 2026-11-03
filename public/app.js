@@ -195,7 +195,7 @@ function renderEntries(entries) {
 
     const desc = document.createElement('div');
     desc.className = 'entry-desc';
-    desc.textContent = e.description;
+    desc.textContent = e.category_name || 'Uncategorized';
     if (e.is_recurring) {
       const badge = document.createElement('span');
       badge.className = 'badge badge-recurring';
@@ -205,8 +205,9 @@ function renderEntries(entries) {
 
     const sub = document.createElement('div');
     sub.className = 'entry-sub';
-    const catName = e.category_name || 'Uncategorized';
-    sub.textContent = `${formatDate(e.occurrence_date)} · ${catName}`;
+    sub.textContent = e.description
+       ? `${formatDate(e.occurrence_date)} · ${e.description}`
+       : formatDate(e.occurrence_date);
 
     main.append(desc, sub);
 
@@ -225,7 +226,9 @@ function renderEntries(entries) {
     delBtn.className = 'icon-btn';
     delBtn.title = 'Delete';
     delBtn.textContent = '🗑';
-    delBtn.addEventListener('click', () => confirmDeleteEntry(e.id, e.description));
+    delBtn.addEventListener('click', () =>
+       confirmDeleteEntry(e.id, e.description || e.category_name || 'this entry')
+    );
     actions.append(editBtn, delBtn);
 
     row.append(dot, main, amount, actions);
