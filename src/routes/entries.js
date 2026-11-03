@@ -46,7 +46,6 @@ function validateEntryBody(body) {
   const recur_until =
     is_recurring && body.recur_until ? String(body.recur_until).trim() : null;
 
-  if (!description) return { error: 'Description is required.' };
   if (description.length > 200) return { error: 'Description is too long (max 200).' };
   if (!Number.isFinite(amount)) return { error: 'Amount must be a number.' };
   if (amount < 0) return { error: 'Amount cannot be negative.' };
