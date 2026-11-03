@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#4f46e5" />
+  <title>Family Spending Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>" />
+</head>
+<body>
+  <!-- ─── Login screen ─────────────────────────────────────── -->
+  <div id="login-screen" class="login-screen hidden">
+    <div class="login-card">
+      <div class="login-logo">💰</div>
+      <h1>Family Spending Tracker</h1>
+      <p class="login-sub">Enter the family password to continue</p>
+      <form id="login-form">
+        <input
+          type="password"
+          id="login-password"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+        />
+        <button type="submit" class="btn btn-primary btn-block" id="login-btn">
+          Unlock
+        </button>
+        <p class="form-error" id="login-error"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ─── App ──────────────────────────────────────────────── -->
+  <div id="app" class="app hidden">
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="brand">
+          <span class="brand-logo">💰</span>
+          <span class="brand-name">Spending Tracker</span>
+        </div>
+        <button class="btn btn-ghost" id="logout-btn" title="Log out">Log out</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Summary -->
+      <section class="summary-cards">
+        <div class="card stat-card">
+          <div class="stat-label">Total in view</div>
+          <div class="stat-value" id="stat-total">$0.00</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Entries in view</div>
+          <div class="stat-value" id="stat-count">0</div>
+        </div>
+        <div class="card stat-card add-card" id="open-add-card">
+          <div class="add-plus">＋</div>
+          <div class="add-text">Add entry</div>
+        </div>
+      </section>
+
+      <!-- Filters -->
+      <section class="card filters">
+        <div class="filters-row">
+          <div class="field">
+            <label for="filter-month">Month</label>
+            <select id="filter-month">
+              <option value="">All months</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-year">Year</label>
+            <select id="filter-year">
+              <option value="">All years</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-category">Category</label>
+            <select id="filter-category">
+              <option value="">All categories</option>
+            </select>
+          </div>
+          <button class="btn btn-ghost reset-btn" id="reset-filters">Reset</button>
+        </div>
+      </section>
+
+      <!-- History -->
+      <section class="card history">
+        <div class="history-head">
+          <h2>History</h2>
+          <button class="btn btn-secondary" id="manage-categories-btn">
+            Manage categories
+          </button>
+        </div>
+        <div id="entries-list" class="entries-list">
+          <!-- rows injected here -->
+        </div>
+        <div id="empty-state" class="empty-state hidden">
+          <div class="empty-emoji">🧾</div>
+          <p>No entries match this view yet.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ─── Entry modal ──────────────────────────────────────── -->
+  <div id="entry-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="entry-modal-title">Add entry</h2>
+        <button class="icon-btn" data-close aria-label="Close">✕</button>
+      </div>
+      <form id="entry-form" class="modal-body">
+        <input type="hidden" id="entry-id" />
+
+        <div class="field">
+          <label for="entry-description">Description</label>
+          <input type="text" id="entry-description" maxlength="200" placeholder="e.g. Weekly groceries" required />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="entry-amount">Amount</label>
+            <input type="number" id="entry-amount" step="0.01" min="0" placeholder="0.00" required />
+          </div>
+          <div class="field">
+            <label for="entry-date">Date</label>
+            <input type="date" id="entry-date" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="entry-category">Category</label>
+          <select id="entry-category"></select>
+        </div>
+
+        <div class="field toggle-field">
+          <label class="switch">
+            <input type="checkbox" id="entry-recurring" />
+            <span class="slider"></span>
+          </label>
+          <span>This is a recurring expense</span>
+        </div>
+
+        <div id="recurring-options" class="recurring-options hidden">
+          <div class="field">
+            <label for="entry-interval">Repeats</label>
+            <select id="entry-interval">
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly" selected>Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+
+          <div class="field toggle-field">
+            <label class="switch">
+              <input type="checkbox" id="entry-forever" checked />
+              <span class="slider"></span>
+            </label>
+            <span>Keep recurring forever</span>
+          </div>
+
+          <div class="field" id="until-field">
+            <label for="entry-until">Stop recurring on</label>
+            <input type="date" id="entry-until" />
+          </div>
+        </div>
+
+        <p class="form-error" id="entry-error"></p>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+          <button type="submit" class="btn btn-primary" id="entry-save-btn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ─── Categories modal ─────────────────────────────────── -->
+  <div id="category-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2>Categories</h2>
+        <button class="icon-btn" data-close aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="category-form" class="category-add">
+          <input type="text" id="category-name" maxlength="60" placeholder="New category name" required />
+          <input type="color" id="category-color" value="#6366f1" title="Pick a color" />
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+        <p class="form-error" id="category-error"></p>
+        <div id="category-list" class="category-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Confirm dialog ───────────────────────────────────── -->
+  <div id="confirm-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card confirm-card">
+      <div class="modal-body">
+        <p id="confirm-message">Are you sure?</p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirm-ok">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

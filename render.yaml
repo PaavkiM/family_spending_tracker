@@ -1,0 +1,25 @@
+# Render Blueprint for the Family Spending Tracker.
+# You can either import this blueprint, or just create a Web Service
+# manually in the Render dashboard with the build/start commands below.
+services:
+  - type: web
+    name: family-spending-tracker
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      # Paste your Neon POOLED connection string here (Render dashboard).
+      - key: DATABASE_URL
+        sync: false
+      # The shared family password.
+      - key: APP_PASSWORD
+        sync: false
+      # A long random string for signing sessions.
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_DAYS
+        value: "30"

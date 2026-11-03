@@ -1,0 +1,23 @@
+{
+  "name": "family-spending-tracker",
+  "version": "1.0.0",
+  "description": "A shared family spending tracker with categories, recurring entries, history filtering, and password protection.",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "node src/db/migrate.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
+    "pg": "^8.13.1"
+  },
+  "license": "MIT"
+}
