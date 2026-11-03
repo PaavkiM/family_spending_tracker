@@ -123,9 +123,8 @@ function populateFilterDates() {
     opt.textContent = name;
     monthSel.appendChild(opt);
   });
-
-  const nowYear = new Date().getFullYear();
-  for (let y = nowYear + 1; y >= nowYear - 6; y--) {
+   
+    for (let y = 2030; y >= 2025; y--) {
     const opt = document.createElement('option');
     opt.value = String(y);
     opt.textContent = String(y);
